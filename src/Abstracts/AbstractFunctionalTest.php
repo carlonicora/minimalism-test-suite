@@ -4,21 +4,17 @@ namespace CarloNicora\Minimalism\TestSuite\Abstracts;
 
 use CarloNicora\Minimalism\TestSuite\Data\ApiRequest;
 use CarloNicora\Minimalism\TestSuite\Data\ApiResponse;
-use CarloNicora\Minimalism\TestSuite\Factories\MinimalismServiceFactory;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractFunctionalTest extends TestCase
 {
-    protected MinimalismServiceFactory $serviceFactory;
-
     /**
      * @return void
      */
     protected function setUp(): void
     {
         parent::setUp();
-        $this->serviceFactory = new MinimalismServiceFactory();
         usleep(100000);
     }
 

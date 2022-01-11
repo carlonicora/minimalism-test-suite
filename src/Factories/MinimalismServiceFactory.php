@@ -7,17 +7,17 @@ use Exception;
 
 class MinimalismServiceFactory
 {
-    /** @var Minimalism  */
-    protected Minimalism $minimalism;
+    /** @var Minimalism|null  */
+    private static ?Minimalism $minimalism=null;
 
     /**
-     *
+     * @return void
      */
-    public function __construct(
-    )
+    private static function setupMinimalism(
+    ): void
     {
         $_SERVER['HTTP_TEST_ENVIRONMENT'] = 1;
-        $this->minimalism = new Minimalism();
+        self::$minimalism = new Minimalism();
     }
 
     /**
@@ -26,10 +26,14 @@ class MinimalismServiceFactory
      * @return InstanceOfType
      * @throws Exception
      */
-    protected function create(
+    public static function create(
         string $serviceName,
     ): ServiceInterface
     {
-        return $this->minimalism->getService($serviceName);
+        if (self::$minimalism === null){
+            self::setupMinimalism();
+        }
+
+        return self::$minimalism->getService($serviceName);
     }
 }
