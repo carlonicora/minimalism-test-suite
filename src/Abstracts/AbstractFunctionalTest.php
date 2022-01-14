@@ -25,8 +25,8 @@ abstract class AbstractFunctionalTest extends TestCase
     {
         parent::setUpBeforeClass();
 
-        self::deleteAllFilesInFolder(__DIR__ . '/../../cache');
-        self::deleteAllFilesInFolder(__DIR__ . '/../../logs', false);
+        self::deleteAllFilesInFolder(__DIR__ . '/../../../../../cache');
+        self::deleteAllFilesInFolder(__DIR__ . '/../../../../../logs', false);
     }
 
     /**
