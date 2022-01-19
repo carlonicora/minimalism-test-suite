@@ -60,6 +60,15 @@ class ApiResponse
     }
 
     /**
+     * @return string
+     */
+    public function getRawResponse(
+    ): string
+    {
+        return $this->rawResponse;
+    }
+
+    /**
      * @return HttpCode
      */
     public function getHttpCode(
