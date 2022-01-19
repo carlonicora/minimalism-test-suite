@@ -96,6 +96,15 @@ class ApiResponse
     }
 
     /**
+     * @return ResourceObject[]
+     */
+    public function getResources(
+    ): array
+    {
+        return $this->response->resources ?? throw new RuntimeException($this->rawResponse, HttpCode::TemporaryRedirect->value);
+    }
+
+    /**
      * @return int
      */
     public function getResourceCount(
