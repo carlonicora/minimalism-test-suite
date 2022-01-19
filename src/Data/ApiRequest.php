@@ -85,11 +85,7 @@ class ApiRequest
         switch ($this->verb){
             case Verbs::Post:
                 $opts [CURLOPT_POST] = 1;
-                if ($this->body !== null){
-                    $opts[CURLOPT_POSTFIELDS] = http_build_query($this->body) ;
-                } elseif ($this->payload !== null){
-                    $opts[CURLOPT_POSTFIELDS] = json_encode($this->payload, JSON_THROW_ON_ERROR);
-                }
+                $opts[CURLOPT_POSTFIELDS] = [];
 
                 if (!empty($this->files)) {
                     $buildFiles = static function(
@@ -126,12 +122,25 @@ class ApiRequest
                         return $fileArray;
                     };
 
-                    if ($this->body !== null){
-                        $opts[CURLOPT_POSTFIELDS] = array_merge($this->body, $buildFiles($this->files));
+                    $opts[CURLOPT_POSTFIELDS] = $buildFiles($this->files);
+                }
+
+                if ($this->body !== null){
+                    if ($opts[CURLOPT_POSTFIELDS] === []){
+                        $opts[CURLOPT_POSTFIELDS] = http_build_query($this->body) ;
                     } else {
-                        $opts[CURLOPT_POSTFIELDS] = $buildFiles($this->files);
+                        $opts[CURLOPT_POSTFIELDS] = array_merge($opts[CURLOPT_POSTFIELDS], $this->body);
                     }
                 }
+
+                if ($this->payload !== null){
+                    if ($opts[CURLOPT_POSTFIELDS] === []){
+                        $opts[CURLOPT_POSTFIELDS] = json_encode($this->payload, JSON_THROW_ON_ERROR);
+                    } else {
+                        $opts[CURLOPT_POSTFIELDS] = array_merge($opts[CURLOPT_POSTFIELDS], ['payload' => json_encode($this->payload, JSON_THROW_ON_ERROR)]);
+                    }
+                }
+
                 break;
             case Verbs::Delete:
             case Verbs::Patch:
