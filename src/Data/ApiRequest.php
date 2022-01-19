@@ -32,6 +32,16 @@ class ApiRequest
     }
 
     /**
+     * @param string $bearer
+     */
+    public function setBearer(
+        string $bearer,
+    ): void
+    {
+        $this->bearer = $bearer;
+    }
+
+    /**
      * @param bool $isTestEnvironment
      * @param string|null $hostName
      * @return array
