@@ -32,20 +32,29 @@ class ApiRequest
     }
 
     /**
-     *
+     * @param bool $isTestEnvironment
+     * @param string|null $hostName
+     * @return array
      */
     protected function getCurlHttpHeaders(
+        bool $isTestEnvironment=false,
         ?string $hostName=null,
     ): array
     {
-        if ($hostName === null){
-            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
-            $hostName = $_ENV['MINIMALISM_SERVICE_TESTER_HOSTNAME'];
+        $httpHeaders = [];
+
+        if ($hostName === null && array_key_exists('MINIMALISM_SERVICE_TESTER_HOSTNAME', $_ENV)){
+            $hostName = (string)$_ENV['MINIMALISM_SERVICE_TESTER_HOSTNAME'];
         }
-        $httpHeaders = [
-            'Host:'.$hostName,
-            'Test-Environment:1'
-        ];
+
+        if ($hostName !== null) {
+            $httpHeaders[] = 'Host:' . $hostName;
+
+        }
+
+        if ($isTestEnvironment){
+            $httpHeaders[] = 'Test-Environment:1';
+        }
 
         if (!empty($this->files)) {
             $httpHeaders[] = 'Content-Type:multipart/form-data';
@@ -63,18 +72,20 @@ class ApiRequest
     /**
      * @param string $serverUrl
      * @param string|null $hostName
+     * @param bool $isTestEnvironment
      * @return array
      * @throws Exception
      */
     public function getCurlOpts(
         string $serverUrl,
         ?string $hostName=null,
+        bool $isTestEnvironment=false,
     ): array
     {
         /** @noinspection CurlSslServerSpoofingInspection */
         $opts = [
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => $this->getCurlHttpHeaders(hostName: $hostName),
+            CURLOPT_HTTPHEADER => $this->getCurlHttpHeaders(isTestEnvironment: $isTestEnvironment, hostName: $hostName),
             CURLOPT_HEADER => 1,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false
