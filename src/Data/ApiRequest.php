@@ -137,7 +137,7 @@ class ApiRequest
                     if ($opts[CURLOPT_POSTFIELDS] === []){
                         $opts[CURLOPT_POSTFIELDS] = json_encode($this->payload, JSON_THROW_ON_ERROR);
                     } else {
-                        $opts[CURLOPT_POSTFIELDS] = array_merge($opts[CURLOPT_POSTFIELDS], ['payload' => json_encode($this->payload, JSON_THROW_ON_ERROR)]);
+                        $opts[CURLOPT_POSTFIELDS]['payload'] = json_encode($this->payload, JSON_THROW_ON_ERROR);
                     }
                 }
 
