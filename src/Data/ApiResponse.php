@@ -47,7 +47,14 @@ class ApiResponse
         $this->rawResponse = substr($curlResponse, curl_getinfo($curl, option: CURLINFO_HEADER_SIZE));
 
         if ($this->responseHttpCode->value >= 400) {
-            $this->error = 'API returned error: ' . $this->rawResponse;
+            try {
+                $apiResponse = json_decode($this->rawResponse, true, 512, JSON_THROW_ON_ERROR);
+                $this->response = new Document($apiResponse);
+
+                $this->error = $this->response->errors[0]->getTitle();
+            } catch (Exception) {
+                $this->error = 'API returned error: ' . $this->rawResponse;
+            }
         }
 
         if (!empty($this->rawResponse)) {
