@@ -22,7 +22,7 @@ trait MapFields
 
         $fieldNames = array_keys($fieldsDefinitions);
         if (count($fieldNames) !== count($fieldValues)) {
-            throw new RuntimeException('Fieldnames count not equal to fieldvalues count');
+            throw new RuntimeException('Field names count not equal to field values count');
         }
 
         foreach ($fieldValues as &$fieldValue) {

@@ -3,7 +3,7 @@ namespace CarloNicora\Minimalism\TestSuite\Data;
 
 use CarloNicora\Minimalism\TestSuite\Enums\Verbs;
 use CURLFile;
-use Exception;
+use JsonException;
 
 class ApiRequest
 {
@@ -44,11 +44,13 @@ class ApiRequest
     /**
      * @param bool $isTestEnvironment
      * @param string|null $hostName
+     * @param array $customHeaders
      * @return array
      */
     protected function getCurlHttpHeaders(
         bool $isTestEnvironment=false,
         ?string $hostName=null,
+        array $customHeaders = []
     ): array
     {
         $httpHeaders = [];
@@ -76,6 +78,11 @@ class ApiRequest
             $httpHeaders[] = 'Authorization:Bearer ' . $this->bearer;
         }
 
+        if (!empty($customHeaders)) {
+            foreach ($customHeaders as $key => $value) {
+                $httpHeaders[]= $key . ':' . $value;
+            }
+        }
         return array_merge($httpHeaders, $this->requestHeader);
     }
 
@@ -83,19 +90,21 @@ class ApiRequest
      * @param string $serverUrl
      * @param string|null $hostName
      * @param bool $isTestEnvironment
+     * @param array $requestHeaders
      * @return array
-     * @throws Exception
+     * @throws JsonException
      */
     public function getCurlOpts(
         string $serverUrl,
         ?string $hostName=null,
         bool $isTestEnvironment=false,
+        array $requestHeaders = []
     ): array
     {
         /** @noinspection CurlSslServerSpoofingInspection */
         $opts = [
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => $this->getCurlHttpHeaders(isTestEnvironment: $isTestEnvironment, hostName: $hostName),
+            CURLOPT_HTTPHEADER => $this->getCurlHttpHeaders(isTestEnvironment: $isTestEnvironment, hostName: $hostName, customHeaders: $requestHeaders),
             CURLOPT_HEADER => 1,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false
@@ -116,7 +125,7 @@ class ApiRequest
                     {
                         $fileArray = [];
                         foreach ($files as $fileKey => $file) {
-                            $multidimensialKey = $subLevel ? '[' . $fileKey . ']' : $fileKey;
+                            $multidimensionalKey = $subLevel ? '[' . $fileKey . ']' : $fileKey;
                             if (!empty($file['path'])) {
                                 $cFile = new CURLFile(
                                     $file['path'],
@@ -124,7 +133,7 @@ class ApiRequest
                                     $file['name']
                                 );
 
-                                $fileArray [$multidimensialKey] = $cFile;
+                                $fileArray [$multidimensionalKey] = $cFile;
                             } elseif (!empty($file['tmp_name'])){
                                 $cFile = new CURLFile(
                                     $file['tmp_name'],
@@ -132,10 +141,10 @@ class ApiRequest
                                     $file['name']
                                 );
 
-                                $fileArray [$multidimensialKey] = $cFile;
+                                $fileArray [$multidimensionalKey] = $cFile;
                             } else {
                                 foreach ($buildFiles($file, true) as $subFileKey => $subFile) {
-                                    $fileArray [$multidimensialKey . $subFileKey ] = $subFile;
+                                    $fileArray [$multidimensionalKey . $subFileKey ] = $subFile;
                                 }
                             }
                         }

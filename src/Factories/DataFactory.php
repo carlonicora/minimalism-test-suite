@@ -14,7 +14,7 @@ class DataFactory
         array $tables,
     ): void
     {
-        foreach ($tables as $tableClass => $tableDataCleass) {
+        foreach ($tables as $tableClass => $tableDataClass) {
             /** @noinspection PhpUndefinedMethodInspection */
             $data->runSQL(
                 tableInterfaceClassName: $tableClass,
@@ -43,7 +43,6 @@ class DataFactory
             }
 
             if (! empty($records)) {
-                /** @noinspection UnusedFunctionResultInspection */
                 $data->insert(
                     tableInterfaceClassName: $tableClass,
                     records: $records

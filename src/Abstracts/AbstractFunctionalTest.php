@@ -1,4 +1,4 @@
-<?php /** @noinspection DevelopmentDependenciesUsageInspection */
+<?php
 
 namespace CarloNicora\Minimalism\TestSuite\Abstracts;
 
@@ -68,7 +68,7 @@ abstract class AbstractFunctionalTest extends TestCase
             $serverUrl = $_ENV['MINIMALISM_SERVICE_TESTER_SERVER'] ?? 'http://docker.for.mac.localhost/v1.0';
         }
 
-        $options = $request->getCurlOpts(serverUrl: $serverUrl, hostName: $hostName, isTestEnvironment: true);
+        $options = $request->getCurlOpts(serverUrl: $serverUrl, hostName: $hostName, isTestEnvironment: true, requestHeaders: $request->requestHeader);
 
         curl_setopt_array($curl, $options);
 
