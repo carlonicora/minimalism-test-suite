@@ -1,53 +1,59 @@
 <?php
 namespace CarloNicora\Minimalism\TestSuite\Factories;
 
-use CarloNicora\Minimalism\Interfaces\Data\Interfaces\DataInterface;
-use Exception;
+use CarloNicora\Minimalism\Exceptions\MinimalismException;
+use CarloNicora\Minimalism\Factories\MinimalismFactories;
+use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlInterface;
+use CarloNicora\Minimalism\Services\MySQL\Factories\SqlFactory;
+use CarloNicora\Minimalism\TestSuite\Interfaces\TableDataInterface;
 
 class DataFactory
 {
     /**
-     * @throws Exception
+     * @param SqlInterface $data
+     * @param string $dataFolder
+     * @return void
+     * @throws MinimalismException
      */
     public static function cleanDatabases(
-        DataInterface $data,
-        array $tables,
+        SqlInterface $data,
+        string $dataFolder,
     ): void
     {
-        foreach ($tables as $tableClass => $tableDataClass) {
+        foreach (glob($dataFolder . DIRECTORY_SEPARATOR . '*/*.php', GLOB_NOSORT) as $dataFile) {
+
             /** @noinspection PhpUndefinedMethodInspection */
-            $data->runSQL(
-                tableInterfaceClassName: $tableClass,
-                sql: 'TRUNCATE TABLE ' . $tableClass::getTableName()
+            $tableClass = MinimalismFactories::getNamespace($dataFile)::getTableClass();
+            $factory = SqlFactory::create($tableClass);
+            /** @noinspection UnusedFunctionResultInspection */
+            $data->read(
+                factory: $factory->setSql('TRUNCATE TABLE ' . $factory->getTable()->getFullName()),
             );
         }
     }
 
     /**
-     * @param DataInterface $data
-     * @param array $tables
+     * @param SqlInterface $data
+     * @param string $dataFolder
      */
     public static function generateTestData(
-        DataInterface $data,
-        array $tables,
+        SqlInterface $data,
+        string $dataFolder,
     ): void
     {
-        foreach ($tables as $tableClass => $tableDataClass) {
+        foreach (glob($dataFolder . DIRECTORY_SEPARATOR . '*/*.php', GLOB_NOSORT) as $dataFile) {
+            /** @var TableDataInterface $tableDataClass */
+            $tableDataClass = MinimalismFactories::getNamespace($dataFile);
+
             $records = [];
 
+            /** @noinspection PhpUndefinedMethodInspection */
             foreach ($tableDataClass::cases() as $record) {
-                $row = $record->row();
-                if (! empty($row)) {
-                    $records [] = $record->row();
-                }
+                $records[] = $record->row();
             }
 
-            if (! empty($records)) {
-                $data->insert(
-                    tableInterfaceClassName: $tableClass,
-                    records: $records
-                );
-            }
+            /** @noinspection UnusedFunctionResultInspection */
+            $data->create($records);
         }
     }
 }
