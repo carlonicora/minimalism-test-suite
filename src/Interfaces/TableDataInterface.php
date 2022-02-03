@@ -14,6 +14,6 @@ interface TableDataInterface
     /**
      * @return string
      */
-    public function tableClass(
+    public static function getTableClass(
     ): string;
 }
