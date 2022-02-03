@@ -99,7 +99,7 @@ class ApiResponse
     public function getFirstResource(
     ): ResourceObject
     {
-        return $this->response->resources[0] ?? throw new RuntimeException($this->rawResponse, HttpCode::TemporaryRedirect->value);
+        return $this->response->resources[0] ?? throw new RuntimeException(empty($this->rawResponse) ? 'Response is empty' : $this->rawResponse, HttpCode::TemporaryRedirect->value);
     }
 
     /**
