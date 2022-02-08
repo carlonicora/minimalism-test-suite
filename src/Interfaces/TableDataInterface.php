@@ -2,14 +2,15 @@
 namespace CarloNicora\Minimalism\TestSuite\Interfaces;
 
 use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlDataObjectInterface;
+use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlFactoryInterface;
 
 interface TableDataInterface
 {
     /**
-     * @return SqlDataObjectInterface
+     * @return SqlDataObjectInterface|SqlFactoryInterface
      */
     public function row(
-    ): SqlDataObjectInterface;
+    ): SqlDataObjectInterface|SqlFactoryInterface;
 
     /**
      * @return string
