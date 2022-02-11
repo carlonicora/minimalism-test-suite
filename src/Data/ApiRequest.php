@@ -194,7 +194,8 @@ class ApiRequest
                 break;
         }
 
-        $opts[CURLOPT_URL] = $serverUrl . ($endpointWithUriParams ?? $this->endpoint);
+        $url = ($endpointWithUriParams) ?? $this->endpoint;
+        $opts[CURLOPT_URL] = str_starts_with($url, $serverUrl) ? $url : $serverUrl . $url;
 
         $opts[CURLOPT_HEADERFUNCTION] = static function($stub, $header)
         {
