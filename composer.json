@@ -26,7 +26,6 @@
     "ext-curl": "*",
     "carlonicora/jsonapi": "~3.0",
     "carlonicora/minimalism": "~13.0",
-    "carlonicora/minimalism-interface-data": "~1.0",
     "carlonicora/minimalism-interface-sql": "~1.0",
     "carlonicora/minimalism-service-mysql": "~6.0"
   },
