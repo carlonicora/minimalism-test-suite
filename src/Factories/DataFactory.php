@@ -4,6 +4,7 @@ namespace CarloNicora\Minimalism\TestSuite\Factories;
 use CarloNicora\Minimalism\Exceptions\MinimalismException;
 use CarloNicora\Minimalism\Factories\MinimalismFactories;
 use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlInterface;
+use CarloNicora\Minimalism\Services\MySQL\Enums\SqlOptions;
 use CarloNicora\Minimalism\Services\MySQL\Factories\SqlQueryFactory;
 use CarloNicora\Minimalism\TestSuite\Interfaces\TableDataInterface;
 
@@ -28,6 +29,7 @@ class DataFactory
             /** @noinspection UnusedFunctionResultInspection */
             $data->read(
                 queryFactory: $factory->setSql('TRUNCATE TABLE ' . $factory->getTable()->getFullName()),
+                options: [SqlOptions::DisableForeignKeyCheck]
             );
         }
     }
