@@ -55,7 +55,10 @@ class DataFactory
             }
 
             /** @noinspection UnusedFunctionResultInspection */
-            $data->create($records);
+            $data->create(
+                queryFactory: $records,
+                options: [SqlOptions::DisableForeignKeyCheck],
+            );
         }
     }
 }
