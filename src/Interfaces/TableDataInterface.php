@@ -7,10 +7,10 @@ use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlQueryFactoryInterface;
 interface TableDataInterface
 {
     /**
-     * @return SqlDataObjectInterface|SqlQueryFactoryInterface
+     * @return SqlDataObjectInterface|SqlQueryFactoryInterface|null
      */
     public function row(
-    ): SqlDataObjectInterface|SqlQueryFactoryInterface;
+    ): SqlDataObjectInterface|SqlQueryFactoryInterface|null;
 
     /**
      * @return string

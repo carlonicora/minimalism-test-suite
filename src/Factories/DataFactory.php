@@ -4,8 +4,10 @@ namespace CarloNicora\Minimalism\TestSuite\Factories;
 use CarloNicora\Minimalism\Exceptions\MinimalismException;
 use CarloNicora\Minimalism\Factories\MinimalismFactories;
 use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlInterface;
+use CarloNicora\Minimalism\Services\MySQL\Enums\SqlOptions;
 use CarloNicora\Minimalism\Services\MySQL\Factories\SqlQueryFactory;
 use CarloNicora\Minimalism\TestSuite\Interfaces\TableDataInterface;
+use UnitEnum;
 
 class DataFactory
 {
@@ -22,12 +24,16 @@ class DataFactory
     {
         foreach (glob($dataFolder . DIRECTORY_SEPARATOR . '*/*.php', GLOB_NOSORT) as $dataFile) {
 
+            if (! str_starts_with($dataFile, '/var/www/html/tests/Data/Analy') && ! str_starts_with($dataFile, '/var/www/html/tests/Data/Finance')) {
+                break;
+            }
             /** @noinspection PhpUndefinedMethodInspection */
             $tableClass = MinimalismFactories::getNamespace($dataFile)::getTableClass();
             $factory = SqlQueryFactory::create($tableClass);
             /** @noinspection UnusedFunctionResultInspection */
             $data->read(
                 queryFactory: $factory->setSql('TRUNCATE TABLE ' . $factory->getTable()->getFullName()),
+                options: [SqlOptions::DisableForeignKeyCheck]
             );
         }
     }
@@ -42,18 +48,23 @@ class DataFactory
     ): void
     {
         foreach (glob($dataFolder . DIRECTORY_SEPARATOR . '*/*.php', GLOB_NOSORT) as $dataFile) {
-            /** @var TableDataInterface $tableDataClass */
+            /** @var UnitEnum $tableDataClass */
             $tableDataClass = MinimalismFactories::getNamespace($dataFile);
 
             $records = [];
 
-            /** @noinspection PhpUndefinedMethodInspection */
+            /** @var TableDataInterface $record */
             foreach ($tableDataClass::cases() as $record) {
-                $records[] = $record->row();
+                if (($row = $record->row()) !== null) {
+                    $records[] = $row;
+                }
             }
 
             /** @noinspection UnusedFunctionResultInspection */
-            $data->create($records);
+            $data->create(
+                queryFactory: $records,
+                options: [SqlOptions::DisableForeignKeyCheck],
+            );
         }
     }
 }
