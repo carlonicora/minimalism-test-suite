@@ -23,10 +23,6 @@ class DataFactory
     ): void
     {
         foreach (glob($dataFolder . DIRECTORY_SEPARATOR . '*/*.php', GLOB_NOSORT) as $dataFile) {
-
-            if (! str_starts_with($dataFile, '/var/www/html/tests/Data/Analy') && ! str_starts_with($dataFile, '/var/www/html/tests/Data/Finance')) {
-                break;
-            }
             /** @noinspection PhpUndefinedMethodInspection */
             $tableClass = MinimalismFactories::getNamespace($dataFile)::getTableClass();
             $factory = SqlQueryFactory::create($tableClass);
