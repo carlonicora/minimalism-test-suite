@@ -1,53 +1,66 @@
 <?php
 namespace CarloNicora\Minimalism\TestSuite\Factories;
 
-use CarloNicora\Minimalism\Interfaces\Data\Interfaces\DataInterface;
-use Exception;
+use CarloNicora\Minimalism\Exceptions\MinimalismException;
+use CarloNicora\Minimalism\Factories\MinimalismFactories;
+use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlInterface;
+use CarloNicora\Minimalism\Services\MySQL\Enums\SqlOptions;
+use CarloNicora\Minimalism\Services\MySQL\Factories\SqlQueryFactory;
+use CarloNicora\Minimalism\TestSuite\Interfaces\TableDataInterface;
+use UnitEnum;
 
 class DataFactory
 {
     /**
-     * @throws Exception
+     * @param SqlInterface $data
+     * @param string $dataFolder
+     * @return void
+     * @throws MinimalismException
      */
     public static function cleanDatabases(
-        DataInterface $data,
-        array $tables,
+        SqlInterface $data,
+        string $dataFolder,
     ): void
     {
-        foreach ($tables as $tableClass => $tableDataClass) {
+        foreach (glob($dataFolder . DIRECTORY_SEPARATOR . '*/*.php', GLOB_NOSORT) as $dataFile) {
             /** @noinspection PhpUndefinedMethodInspection */
-            $data->runSQL(
-                tableInterfaceClassName: $tableClass,
-                sql: 'TRUNCATE TABLE ' . $tableClass::getTableName()
+            $tableClass = MinimalismFactories::getNamespace($dataFile)::getTableClass();
+            $factory = SqlQueryFactory::create($tableClass);
+            /** @noinspection UnusedFunctionResultInspection */
+            $data->read(
+                queryFactory: $factory->setSql('TRUNCATE TABLE ' . $factory->getTable()->getFullName()),
+                options: [SqlOptions::DisableForeignKeyCheck]
             );
         }
     }
 
     /**
-     * @param DataInterface $data
-     * @param array $tables
+     * @param SqlInterface $data
+     * @param string $dataFolder
      */
     public static function generateTestData(
-        DataInterface $data,
-        array $tables,
+        SqlInterface $data,
+        string $dataFolder,
     ): void
     {
-        foreach ($tables as $tableClass => $tableDataClass) {
+        foreach (glob($dataFolder . DIRECTORY_SEPARATOR . '*/*.php', GLOB_NOSORT) as $dataFile) {
+            /** @var UnitEnum $tableDataClass */
+            $tableDataClass = MinimalismFactories::getNamespace($dataFile);
+
             $records = [];
 
+            /** @var TableDataInterface $record */
             foreach ($tableDataClass::cases() as $record) {
-                $row = $record->row();
-                if (! empty($row)) {
-                    $records [] = $record->row();
+                if (($row = $record->row()) !== null) {
+                    $records[] = $row;
                 }
             }
 
-            if (! empty($records)) {
-                $data->insert(
-                    tableInterfaceClassName: $tableClass,
-                    records: $records
-                );
-            }
+            /** @noinspection UnusedFunctionResultInspection */
+            $data->create(
+                queryFactory: $records,
+                options: [SqlOptions::DisableForeignKeyCheck],
+            );
         }
     }
 }

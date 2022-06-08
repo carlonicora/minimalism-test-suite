@@ -1,17 +1,20 @@
 <?php
 namespace CarloNicora\Minimalism\TestSuite\Interfaces;
 
-use CarloNicora\Minimalism\Interfaces\Data\Interfaces\TableInterface;
+use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlDataObjectInterface;
+use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlQueryFactoryInterface;
 
 interface TableDataInterface
 {
     /**
-     * @return string|TableInterface
+     * @return SqlDataObjectInterface|SqlQueryFactoryInterface|null
      */
-    public static function tableClass(): string|TableInterface;
+    public function row(
+    ): SqlDataObjectInterface|SqlQueryFactoryInterface|null;
 
     /**
-     * @return array
+     * @return string
      */
-    public function row(): array;
+    public static function getTableClass(
+    ): string;
 }
