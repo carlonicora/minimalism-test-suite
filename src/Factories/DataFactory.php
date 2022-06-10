@@ -3,9 +3,9 @@ namespace CarloNicora\Minimalism\TestSuite\Factories;
 
 use CarloNicora\Minimalism\Exceptions\MinimalismException;
 use CarloNicora\Minimalism\Factories\MinimalismFactories;
+use CarloNicora\Minimalism\Interfaces\Sql\Factories\SqlQueryFactory;
 use CarloNicora\Minimalism\Interfaces\Sql\Interfaces\SqlInterface;
-use CarloNicora\Minimalism\Services\MySQL\Enums\SqlOptions;
-use CarloNicora\Minimalism\Services\MySQL\Factories\SqlQueryFactory;
+use CarloNicora\Minimalism\Services\MySQL\Enums\MySqlOptions;
 use CarloNicora\Minimalism\TestSuite\Interfaces\TableDataInterface;
 use UnitEnum;
 
@@ -29,7 +29,7 @@ class DataFactory
             /** @noinspection UnusedFunctionResultInspection */
             $data->read(
                 queryFactory: $factory->setSql('TRUNCATE TABLE ' . $factory->getTable()->getFullName()),
-                options: [SqlOptions::DisableForeignKeyCheck]
+                options: [MySqlOptions::DisableForeignKeyCheck]
             );
         }
     }
@@ -59,7 +59,7 @@ class DataFactory
             /** @noinspection UnusedFunctionResultInspection */
             $data->create(
                 queryFactory: $records,
-                options: [SqlOptions::DisableForeignKeyCheck],
+                options: [MySqlOptions::DisableForeignKeyCheck],
             );
         }
     }

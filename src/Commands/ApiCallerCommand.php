@@ -37,9 +37,7 @@ class ApiCallerCommand
 
         $result = new ApiResponse($curl, $curlResponse, $request::$responseHeaders);
 
-        if (isset($curl)) {
-            curl_close($curl);
-        }
+        curl_close($curl);
 
         unset($curl);
 
