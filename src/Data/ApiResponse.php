@@ -117,6 +117,10 @@ class ApiResponse
     public function getResourceCount(
     ): int
     {
+        if (! isset($this->response)) {
+            return 0;
+        }
+
         return count($this->response->resources);
     }
 
