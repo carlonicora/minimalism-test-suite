@@ -33,7 +33,7 @@ abstract class AbstractFunctionalTest extends TestCase
      * @param string $dir
      * @param bool $recursive
      */
-    private static function deleteAllFilesInFolder(
+    protected static function deleteAllFilesInFolder(
         string $dir,
         bool $recursive=true,
     ): void
